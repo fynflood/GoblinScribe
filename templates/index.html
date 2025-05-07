@@ -1,0 +1,326 @@
+i<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Scribe - Transcription & Summarization</title>
+    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+    <link rel="preconnect" href="[https://fonts.googleapis.com](https://fonts.googleapis.com)">
+    <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
+    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap)" rel="stylesheet">
+    <style>
+        /* Clean Dark Palette (Nord Inspired) */
+        :root {
+            --bg-main: #2E3440; /* Nord Polar Night */
+            --bg-container: #3B4252; /* Nord Polar Night (slightly lighter) */
+            --bg-element: #434C5E; /* Nord Polar Night (even lighter for inputs) */
+            --border-color: #4C566A; /* Nord Polar Night (borders) */
+            --text-primary: #ECEFF4; /* Nord Snow Storm */
+            --text-secondary: #D8DEE9; /* Nord Snow Storm */
+            --text-muted: #A3ABB2; /* Custom muted, inspired by Nord */
+            --accent-primary: #88C0D0; /* Nord Frost - Teal/Blue */
+            --accent-secondary: #5E81AC; /* Nord Frost - Darker Blue */
+            --accent-success: #A3BE8C; /* Nord Aurora - Green */
+            --accent-error: #BF616A; /* Nord Aurora - Red */
+            --accent-warning: #EBCB8B; /* Nord Aurora - Yellow */
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            font-weight: 400;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .main-container {
+            max-width: 900px; /* Adjusted for better desktop layout */
+            width: 90%;      /* Responsive width */
+            margin: 2.5rem auto; 
+            padding: 2.5rem; 
+            background-color: var(--bg-container); 
+            border-radius: 10px; 
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.15);
+            border: 1px solid var(--border-color);
+            flex-grow: 1;
+        }
+        .btn-primary {
+            transition: background-color 0.2s ease-out, transform 0.15s ease-out, box-shadow 0.2s ease-out;
+            background-color: var(--accent-primary);
+            color: var(--bg-main); 
+            font-weight: 600;
+            padding: 0.75rem 1.5rem; 
+            border-radius: 6px; 
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+        .btn-primary:hover {
+            background-color: var(--accent-secondary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .btn-primary:active {
+            transform: translateY(0px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .loader {
+            border: 4px solid var(--bg-element); 
+            border-top: 4px solid var(--accent-primary); 
+            border-radius: 50%;
+            width: 36px; 
+            height: 36px;
+            animation: spin 0.7s linear infinite;
+            margin: 1.5rem auto;
+            display: none; 
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .flash-message {
+            border-left-width: 5px;
+            padding: 1rem; 
+            margin-bottom: 1.5rem; 
+            border-radius: 6px; 
+            font-size: 0.9rem; 
+            color: var(--text-primary);
+            background-color: var(--bg-element); 
+        }
+        .flash-success { border-color: var(--accent-success); } 
+        .flash-error { border-color: var(--accent-error); } 
+        .flash-info { border-color: var(--accent-primary); } 
+        .flash-warning { border-color: var(--accent-warning); } 
+
+        .form-section { margin-bottom: 2rem; } 
+        .form-label { display: block; margin-bottom: 0.625rem; font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); }
+        .form-input, .form-textarea, .form-select {
+            width: 100%; padding: 0.75rem 1rem; 
+            font-size: 0.9rem; color: var(--text-primary);
+            background-color: var(--bg-element); 
+            border: 1px solid var(--border-color); 
+            border-radius: 6px; 
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+            transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
+        }
+        .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); opacity: 0.8; }
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--accent-primary); 
+            box-shadow: 0 0 0 3px rgba(136, 192, 208, 0.25); 
+            background-color: var(--bg-container); 
+        }
+        .form-textarea { min-height: 130px; resize: vertical; }
+        .form-checkbox-label { display: flex; align-items: center; cursor: pointer; color: var(--text-secondary); }
+        .form-checkbox { 
+            width: 1.1rem; height: 1.1rem; margin-right: 0.625rem; 
+            border-radius: 4px; border: 1px solid var(--border-color);
+            background-color: var(--bg-element); 
+            color: var(--accent-primary);
+            appearance: none; 
+            position: relative;
+        }
+        .form-checkbox:checked {
+            background-color: var(--accent-primary);
+            border-color: var(--accent-secondary);
+        }
+        .form-checkbox:checked::before { 
+            content: '✓';
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: var(--bg-main);
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .form-checkbox:focus {
+             box-shadow: 0 0 0 3px rgba(136, 192, 208, 0.25); 
+        }
+
+        .prompt-note { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; }
+        .prompt-note code { background-color: var(--bg-element); color: var(--accent-primary); padding: 0.125rem 0.375rem; border-radius: 4px; font-weight: 600;}
+        
+        input[type="file"] { color: var(--text-muted); }
+        input[type="file"]::file-selector-button {
+            margin-right: 1rem; padding: 0.625rem 1rem; border: 1px solid var(--border-color);
+            border-radius: 6px; background-color: var(--bg-element); color: var(--text-primary);
+            font-weight: 500; cursor: pointer; transition: background-color 0.2s ease-out;
+        }
+        input[type="file"]::file-selector-button:hover { background-color: var(--bg-container); }
+        
+        .page-header { text-align: center; margin-bottom: 2.5rem; }
+        .page-title { color: var(--accent-primary); font-size: 2.5rem; margin-top: 0.5rem; } /* Removed title-font class */
+        .page-subtitle { color: var(--text-secondary); margin-top: 0.5rem; font-size: 1.1rem; }
+
+        .page-footer {
+            text-align: center;
+            margin-top: auto; 
+            padding-top: 2rem;
+            padding-bottom: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <header class="page-header">
+            <h1 class="page-title">Audio Scribe</h1> <p class="page-subtitle">Upload your audio to transcribe and summarize.</p>
+        </header>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash-message {{ 'flash-error' if category == 'error' else ('flash-success' if category == 'success' else ('flash-warning' if category == 'warning' else 'flash-info')) }}" role="alert">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form action="{{ url_for('transcribe_and_summarize_route') }}" method="post" enctype="multipart/form-data" id="uploadForm">
+            <div class="form-section">
+                <label for="audioFile" class="form-label">1. Upload Audio File (MP3, WAV)</label>
+                <input type="file" name="audioFile" id="audioFile" required accept=".mp3,.wav" class="form-input">
+                <p class="prompt-note">Max file size: {{ max_upload_mb }}MB. Large files may take time to process.</p>
+            </div>
+
+            <div class="form-section">
+                <label for="saved_prompt_selection" class="form-label">2. Select Summary Prompt (Optional)</label>
+                <select name="saved_prompt_selection" id="saved_prompt_selection" class="form-select">
+                    <option value="">-- Or Enter a Custom Prompt Below --</option>
+                    {% for prompt in saved_prompts %}
+                        <option value="{{ prompt.name }}">{{ prompt.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-section">
+                <label for="custom_prompt_text" class="form-label">3. Enter Custom Summary Prompt</label>
+                <textarea name="custom_prompt_text" id="custom_prompt_text" class="form-textarea" placeholder="e.g., Summarize the key decisions and action items from this transcript: {transcript}"></textarea>
+                <p class="prompt-note">Your prompt **must** include the placeholder <code class="font-semibold">{transcript}</code> where the audio transcript will be inserted.</p>
+            </div>
+            
+            <div class="form-section border-t pt-6" style="border-color: var(--border-color);">
+                 <label class="form-checkbox-label">
+                    <input type="checkbox" name="save_new_prompt_checkbox" id="save_new_prompt_checkbox" class="form-checkbox">
+                    <span style="color: var(--text-secondary);">Save this custom prompt for future use?</span>
+                </label>
+                <div id="new_prompt_name_container" style="display: none;" class="mt-3">
+                    <label for="new_prompt_name" class="form-label">Name for new prompt:</label>
+                    <input type="text" name="new_prompt_name" id="new_prompt_name" class="form-input" placeholder="e.g., Meeting Summary Prompt">
+                </div>
+            </div>
+
+            <button type="submit" id="submitButton"
+                    class="w-full btn-primary font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-md"
+                    style="ring-offset-color: var(--bg-container); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.25), 0 2px 4px -1px rgba(0,0,0,0.15);">
+                Transcribe & Summarize
+            </button>
+        </form>
+        <div id="loader" class="loader"></div>
+        <p id="processingMessage" class="text-center text-sm mt-4" style="display:none; color: var(--text-muted);">
+            Processing your audio... please wait.
+        </p>
+    </div>
+
+    <footer class="page-footer">
+        <p>&copy; Audio Scribe Service</p>
+    </footer>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const loader = document.getElementById('loader');
+        const submitButton = document.getElementById('submitButton');
+        const processingMessage = document.getElementById('processingMessage');
+        const audioFileInput = document.getElementById('audioFile');
+        const savedPromptSelect = document.getElementById('saved_prompt_selection');
+        const customPromptTextarea = document.getElementById('custom_prompt_text');
+        const saveNewPromptCheckbox = document.getElementById('save_new_prompt_checkbox');
+        const newPromptNameContainer = document.getElementById('new_prompt_name_container');
+        const newPromptNameInput = document.getElementById('new_prompt_name');
+
+        savedPromptSelect.addEventListener('change', function() {
+            const selectedPromptName = this.value;
+            if (selectedPromptName) {
+                const prompts = {{ saved_prompts|tojson }};
+                const selectedPromptData = prompts.find(p => p.name === selectedPromptName);
+                if (selectedPromptData) {
+                    customPromptTextarea.value = selectedPromptData.text;
+                    customPromptTextarea.readOnly = true; 
+                    saveNewPromptCheckbox.checked = false; 
+                    newPromptNameContainer.style.display = 'none';
+                    newPromptNameInput.required = false;
+                }
+            } else {
+                customPromptTextarea.value = ''; 
+                customPromptTextarea.readOnly = false;
+            }
+        });
+        
+        customPromptTextarea.addEventListener('input', function() {
+            if (customPromptTextarea.value.trim() !== '') {
+                savedPromptSelect.value = ''; 
+                customPromptTextarea.readOnly = false;
+            }
+        });
+
+        saveNewPromptCheckbox.addEventListener('change', function() {
+            newPromptNameContainer.style.display = this.checked ? 'block' : 'none';
+            if (this.checked) {
+                newPromptNameInput.required = true;
+            } else {
+                newPromptNameInput.required = false;
+            }
+        });
+
+        form.addEventListener('submit', function(event) {
+            if (audioFileInput.files.length > 0) {
+                const fileSizeMB = audioFileInput.files[0].size / 1024 / 1024;
+                const maxAllowedMB = parseFloat("{{ max_upload_mb }}");
+
+                if (fileSizeMB > maxAllowedMB) {
+                    alert(`File size (${fileSizeMB.toFixed(2)}MB) exceeds the maximum allowed size of ${maxAllowedMB}MB.`);
+                    event.preventDefault();
+                    return;
+                }
+                
+                if (!savedPromptSelect.value && customPromptTextarea.value.trim() === '') {
+                    alert('Please select a saved prompt or enter a custom summary prompt.');
+                    event.preventDefault();
+                    customPromptTextarea.focus();
+                    return;
+                }
+
+                if (customPromptTextarea.value.trim() !== '' && !customPromptTextarea.value.includes('{transcript}')) {
+                    alert("Your custom prompt must include the placeholder '{transcript}'.");
+                    event.preventDefault();
+                    customPromptTextarea.focus();
+                    return;
+                }
+                
+                if (saveNewPromptCheckbox.checked && newPromptNameInput.value.trim() === '') {
+                    alert('Please provide a name for the new prompt if you wish to save it.');
+                    event.preventDefault();
+                    newPromptNameInput.focus();
+                    return;
+                }
+
+                loader.style.display = 'block';
+                processingMessage.style.display = 'block';
+                submitButton.disabled = true;
+                submitButton.innerHTML = `
+                    <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Processing...
+                `;
+            } else {
+                alert('Please select an audio file to upload.');
+                event.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

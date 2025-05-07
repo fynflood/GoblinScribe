@@ -1,0 +1,26 @@
+[
+    {
+        "name": "Default Concise Summary",
+        "text": "Please provide a concise summary of the following audio transcript:\n\nTranscript:\n{transcript}\n\nSummary:"
+    },
+    {
+        "name": "Key Action Items",
+        "text": "From the following transcript, please extract the key action items, decisions made, and responsible individuals if mentioned. Format as a list:\n\nTranscript:\n{transcript}\n\nKey Points:"
+    },
+    {
+        "name": "Main Topics Discussed",
+        "text": "What are the main topics discussed in the following transcript? List them clearly.\n\nTranscript:\n{transcript}\n\nMain Topics:"
+    },
+    {
+        "name": "Mists of Sherwood",
+        "text": "This is a transcript of our latest D&D session that occurred on 5/4/25, our 29th session in the Curse of Strahd campaign. We're near the end, and they're all level 9.\r\n\r\nPlease summarize the session, and be sure to include something that each Character did.\r\n\r\nThe Player Characters in this session are:\r\n\r\nTanis, Dan ReDruff, Jabroni, Mordecai, FTX and Sir Godfrey Gwilym\r\n\r\nHere is the transcript: {transcript}"
+    },
+    {
+        "name": "MoS",
+        "text": "Please summarize the following audio transcript of our latest D&D session, and be sure to include something that each Character did.\r\n\r\nThe Player Characters in this session are Tanis, Dan ReDruff, Jabroni, Mordecai, FTX and Sir Godfrey Gwilym\r\n\r\nTranscript:\r\n{transcript}\r\n\r\nSummary:"
+    },
+    {
+        "name": "Generic D&D Detailed",
+        "text": "Provide a detailed summary of this D&D session of the following audio transcript:\r\n\r\nTranscript:\r\n{transcript}\r\n\r\nSummary:"
+    }
+]
