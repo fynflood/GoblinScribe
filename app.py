@@ -3,11 +3,12 @@ import os
 import uuid
 import json # For saving and loading prompts
 import flask
-from flask import Flask, request, render_template, redirect, url_for, flash
+from flask import Flask, request, render_template, redirect, url_for, flash, jsonify
 import torch
 import whisper # Using openai-whisper
 import torchaudio
 import google.generativeai as genai
+import requests # For sending requests to Discord webhook
 
 # --- Configuration ---
 UPLOAD_FOLDER = 'uploads'
@@ -17,7 +18,7 @@ API_KEY_FILE = 'gemini_api_key.txt' # File to store the Gemini API Key
 
 MAX_CONTENT_LENGTH_MB = 500 
 FLASK_MAX_CONTENT_LENGTH = MAX_CONTENT_LENGTH_MB * 1024 * 1024
-WHISPER_MODEL_SIZE = "large-v3"
+WHISPER_MODEL_SIZE = "base"
 
 # --- Load Gemini API Key ---
 # Priority:
@@ -174,7 +175,7 @@ def summarize_with_gemini(transcript_text, full_prompt_text):
 @app.route('/', methods=['GET'])
 def index():
     """Serves the main upload page and loads prompts."""
-    ensure_upload_folder() # Also ensure prompts file is checked/created on first load
+    ensure_upload_folder() 
     prompts = load_prompts()
     return render_template('index.html', max_upload_mb=MAX_CONTENT_LENGTH_MB, saved_prompts=prompts)
 
@@ -198,7 +199,6 @@ def transcribe_and_summarize_route():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
         original_filename = file.filename
 
-        # --- Prompt Handling ---
         selected_prompt_name = request.form.get('saved_prompt_selection')
         custom_prompt_text_input = request.form.get('custom_prompt_text', '').strip()
         save_new_prompt_flag = request.form.get('save_new_prompt_checkbox')
@@ -210,7 +210,6 @@ def transcribe_and_summarize_route():
         if custom_prompt_text_input:
             final_summary_prompt_text = custom_prompt_text_input
             if save_new_prompt_flag and new_prompt_name_input:
-                # Check if prompt name already exists
                 if any(p['name'] == new_prompt_name_input for p in prompts):
                     flash(f"A prompt with the name '{new_prompt_name_input}' already exists. Not saving.", 'warning')
                 else:
@@ -223,25 +222,20 @@ def transcribe_and_summarize_route():
                 final_summary_prompt_text = selected_prompt_obj['text']
             else:
                 flash(f"Selected saved prompt '{selected_prompt_name}' not found. Using default.", 'error')
-                # Fallback to the first prompt or a hardcoded default if list is empty
                 final_summary_prompt_text = prompts[0]['text'] if prompts else "Summarize this: {transcript}"
         else:
-            # Fallback if no prompt is somehow provided (should be handled by UI)
             flash("No prompt selected or entered. Using a default summary prompt.", 'warning')
             final_summary_prompt_text = prompts[0]['text'] if prompts else "Please summarize the following: {transcript}"
         
-        # Ensure the prompt text contains the placeholder
         if "{transcript}" not in final_summary_prompt_text:
             flash("The selected or entered prompt is missing the '{transcript}' placeholder. Please edit the prompt to include it.", "error")
             return redirect(url_for('index'))
-
 
         try:
             file.save(filepath)
             flash(f"File '{original_filename}' uploaded successfully. Processing...", 'info')
             print(f"File saved to: {filepath}")
 
-            print("Starting transcription process...")
             transcript = transcribe_audio(filepath)
             if not transcript:
                 flash("Transcription failed or returned no content.", 'error')
@@ -249,7 +243,6 @@ def transcribe_and_summarize_route():
                 return redirect(url_for('index'))
             print("Transcription successful.")
 
-            print("Starting summarization process...")
             summary = summarize_with_gemini(transcript, final_summary_prompt_text)
             print("Summarization process finished.")
 
@@ -257,6 +250,7 @@ def transcribe_and_summarize_route():
                                    transcript=transcript, 
                                    summary=summary, 
                                    filename=original_filename,
+                                   filename_json=json.dumps(original_filename), # Pass filename as JSON for JS
                                    used_prompt=final_summary_prompt_text.replace("{transcript}", "[Transcript was inserted here]"))
 
         except Exception as e:
@@ -273,6 +267,55 @@ def transcribe_and_summarize_route():
     else:
         flash(f"Invalid file type. Allowed types are: {', '.join(ALLOWED_EXTENSIONS)}", 'error')
         return redirect(url_for('index'))
+
+@app.route('/send_to_discord', methods=['POST'])
+def send_to_discord_route():
+    """Receives summary and webhook URL, then sends to Discord."""
+    data = request.get_json()
+    if not data:
+        return jsonify({"status": "error", "message": "Invalid request data."}), 400
+
+    webhook_url = data.get('webhook_url')
+    summary_text = data.get('summary_text')
+    filename = data.get('filename', 'Audio File') # Optional: include filename
+
+    if not webhook_url or not summary_text:
+        return jsonify({"status": "error", "message": "Webhook URL and summary text are required."}), 400
+
+    # Discord message limit is 2000 characters. Truncate if necessary.
+    max_len = 1900 # Leave some room for formatting
+    if len(summary_text) > max_len:
+        summary_text = summary_text[:max_len] + "... (summary truncated)"
+    
+    discord_payload = {
+        "content": f"**Summary for: {filename}**\n\n>>> {summary_text}"
+    }
+
+    try:
+        response = requests.post(webhook_url, json=discord_payload, timeout=10)
+        response.raise_for_status() 
+        return jsonify({"status": "success", "message": "Summary sent to Discord successfully!"})
+    except requests.exceptions.RequestException as e:
+        print(f"Error sending to Discord: {e}")
+        error_message = str(e)
+        # Attempt to get status code if response object exists
+        status_code = response.status_code if 'response' in locals() and response is not None else None
+
+        if "No schema supplied" in error_message or "Invalid URL" in error_message:
+             error_message = "Invalid Discord Webhook URL provided."
+        elif status_code == 404:
+             error_message = "Discord Webhook URL not found (404)."
+        elif status_code == 401:
+             error_message = "Unauthorized - Check your Discord Webhook URL (401)."
+        elif status_code == 403:
+             error_message = "Forbidden - Check your Discord Webhook permissions (403)."
+        # Add more specific error messages based on common Discord webhook errors if needed
+
+        return jsonify({"status": "error", "message": f"Failed to send summary to Discord: {error_message}"}), 500
+    except Exception as e:
+        print(f"Unexpected error sending to Discord: {e}")
+        return jsonify({"status": "error", "message": "An unexpected error occurred while sending to Discord."}), 500
+
 
 if __name__ == '__main__':
     print("Starting Flask app...")

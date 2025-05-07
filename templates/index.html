@@ -1,4 +1,4 @@
-i<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,65 +9,68 @@ i<!DOCTYPE html>
     <link rel="preconnect" href="[https://fonts.gstatic.com](https://fonts.gstatic.com)" crossorigin>
     <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap)" rel="stylesheet">
     <style>
-        /* Clean Dark Palette (Nord Inspired) */
+        /* New Firebase Inspired Dark Palette */
         :root {
-            --bg-main: #2E3440; /* Nord Polar Night */
-            --bg-container: #3B4252; /* Nord Polar Night (slightly lighter) */
-            --bg-element: #434C5E; /* Nord Polar Night (even lighter for inputs) */
-            --border-color: #4C566A; /* Nord Polar Night (borders) */
-            --text-primary: #ECEFF4; /* Nord Snow Storm */
-            --text-secondary: #D8DEE9; /* Nord Snow Storm */
-            --text-muted: #A3ABB2; /* Custom muted, inspired by Nord */
-            --accent-primary: #88C0D0; /* Nord Frost - Teal/Blue */
-            --accent-secondary: #5E81AC; /* Nord Frost - Darker Blue */
-            --accent-success: #A3BE8C; /* Nord Aurora - Green */
-            --accent-error: #BF616A; /* Nord Aurora - Red */
-            --accent-warning: #EBCB8B; /* Nord Aurora - Yellow */
+            --fb-bg-main: #0a0d0f; /* Background */
+            --fb-bg-card: #171d22; /* Selection Box / Main Container */
+            --fb-bg-element: #1e2a33; /* Slightly lighter for inputs, secondary elements */
+            --fb-border: #2a3b47;   /* Subtle borders */
+            --fb-text-primary: #909ba4; /* Text */
+            --fb-text-secondary: #788691; /* Muted text */
+            --fb-accent-primary: #5e1e2b; /* Buttons */
+            --fb-accent-secondary: #7d283b; /* Button hover */
+            
+            /* Supporting colors for status messages etc. */
+            --fb-success: #27AE60; 
+            --fb-error: #C0392B;   
+            --fb-warning: #F39C12; 
+            --fb-info-accent: #3498DB; /* A blue for info, distinct from main accents */
         }
 
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-main);
-            color: var(--text-primary);
+            background-color: var(--fb-bg-main);
+            color: var(--fb-text-primary);
             line-height: 1.6;
             font-weight: 400;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            padding: 1rem;
         }
         .main-container {
-            max-width: 900px; /* Adjusted for better desktop layout */
-            width: 90%;      /* Responsive width */
+            max-width: 900px; 
+            width: 90%;      
             margin: 2.5rem auto; 
             padding: 2.5rem; 
-            background-color: var(--bg-container); 
-            border-radius: 10px; 
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.15);
-            border: 1px solid var(--border-color);
+            background-color: var(--fb-bg-card); 
+            border-radius: 12px; 
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3), 0 7px 10px rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--fb-border);
             flex-grow: 1;
         }
         .btn-primary {
             transition: background-color 0.2s ease-out, transform 0.15s ease-out, box-shadow 0.2s ease-out;
-            background-color: var(--accent-primary);
-            color: var(--bg-main); 
+            background-color: var(--fb-accent-primary);
+            color: #FFFFFF; /* White text on dark red button */
             font-weight: 600;
-            padding: 0.75rem 1.5rem; 
-            border-radius: 6px; 
+            padding: 0.8rem 1.75rem; 
+            border-radius: 8px; 
             border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
         }
         .btn-primary:hover {
-            background-color: var(--accent-secondary);
+            background-color: var(--fb-accent-secondary);
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.25);
         }
         .btn-primary:active {
             transform: translateY(0px);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.18);
         }
         .loader {
-            border: 4px solid var(--bg-element); 
-            border-top: 4px solid var(--accent-primary); 
+            border: 4px solid var(--fb-bg-element); 
+            border-top: 4px solid var(--fb-accent-primary); 
             border-radius: 50%;
             width: 36px; 
             height: 36px;
@@ -83,74 +86,76 @@ i<!DOCTYPE html>
             border-left-width: 5px;
             padding: 1rem; 
             margin-bottom: 1.5rem; 
-            border-radius: 6px; 
+            border-radius: 8px; 
             font-size: 0.9rem; 
-            color: var(--text-primary);
-            background-color: var(--bg-element); 
+            color: var(--fb-text-primary); /* Use primary text for flash messages */
+            background-color: var(--fb-bg-element); 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .flash-success { border-color: var(--accent-success); } 
-        .flash-error { border-color: var(--accent-error); } 
-        .flash-info { border-color: var(--accent-primary); } 
-        .flash-warning { border-color: var(--accent-warning); } 
+        .flash-success { border-color: var(--fb-success); background-color: rgba(39, 174, 96, 0.15); } 
+        .flash-error { border-color: var(--fb-error); background-color: rgba(192, 57, 43, 0.1); } 
+        .flash-info { border-color: var(--fb-info-accent); background-color: rgba(52, 152, 219, 0.1); } 
+        .flash-warning { border-color: var(--fb-warning); background-color: rgba(243, 156, 18, 0.1); } 
 
         .form-section { margin-bottom: 2rem; } 
-        .form-label { display: block; margin-bottom: 0.625rem; font-size: 0.9rem; font-weight: 500; color: var(--text-secondary); }
+        .form-label { display: block; margin-bottom: 0.625rem; font-size: 0.9rem; font-weight: 500; color: var(--fb-text-secondary); }
         .form-input, .form-textarea, .form-select {
-            width: 100%; padding: 0.75rem 1rem; 
-            font-size: 0.9rem; color: var(--text-primary);
-            background-color: var(--bg-element); 
-            border: 1px solid var(--border-color); 
+            width: 100%; padding: 0.8rem 1rem; 
+            font-size: 0.9rem; color: var(--fb-text-primary);
+            background-color: var(--fb-bg-element); 
+            border: 1px solid var(--fb-border); 
             border-radius: 6px; 
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
             transition: border-color 0.2s ease-out, box-shadow 0.2s ease-out;
         }
-        .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); opacity: 0.8; }
+        .form-input::placeholder, .form-textarea::placeholder { color: var(--fb-text-secondary); opacity: 0.7; }
         .form-input:focus, .form-textarea:focus, .form-select:focus {
             outline: none;
-            border-color: var(--accent-primary); 
-            box-shadow: 0 0 0 3px rgba(136, 192, 208, 0.25); 
-            background-color: var(--bg-container); 
+            border-color: var(--fb-accent-primary); 
+            box-shadow: 0 0 0 3px rgba(94, 30, 43, 0.3); 
+            background-color: var(--fb-bg-card); 
         }
-        .form-textarea { min-height: 130px; resize: vertical; }
-        .form-checkbox-label { display: flex; align-items: center; cursor: pointer; color: var(--text-secondary); }
+        .form-textarea { min-height: 130px; resize: vertical; padding: 0.8rem 1rem; /* Ensure consistent padding */}
+        .form-checkbox-label { display: flex; align-items: center; cursor: pointer; color: var(--fb-text-secondary); }
         .form-checkbox { 
             width: 1.1rem; height: 1.1rem; margin-right: 0.625rem; 
-            border-radius: 4px; border: 1px solid var(--border-color);
-            background-color: var(--bg-element); 
-            color: var(--accent-primary);
+            border-radius: 4px; border: 1px solid var(--fb-border);
+            background-color: var(--fb-bg-element); 
+            color: var(--fb-accent-primary);
             appearance: none; 
             position: relative;
         }
         .form-checkbox:checked {
-            background-color: var(--accent-primary);
-            border-color: var(--accent-secondary);
+            background-color: var(--fb-accent-primary);
+            border-color: var(--fb-accent-secondary);
         }
         .form-checkbox:checked::before { 
             content: '✓';
             font-size: 0.8rem;
             font-weight: bold;
-            color: var(--bg-main);
+            color: #FFFFFF; /* White checkmark */
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
         }
         .form-checkbox:focus {
-             box-shadow: 0 0 0 3px rgba(136, 192, 208, 0.25); 
+             box-shadow: 0 0 0 3px rgba(94, 30, 43, 0.3); 
         }
 
-        .prompt-note { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.5rem; }
-        .prompt-note code { background-color: var(--bg-element); color: var(--accent-primary); padding: 0.125rem 0.375rem; border-radius: 4px; font-weight: 600;}
+        .prompt-note { font-size: 0.85rem; color: var(--fb-text-secondary); margin-top: 0.5rem; }
+        .prompt-note code { background-color: var(--fb-bg-element); color: var(--fb-accent-primary); padding: 0.125rem 0.375rem; border-radius: 4px; font-weight: 600;}
         
-        input[type="file"] { color: var(--text-muted); }
+        input[type="file"] { color: var(--fb-text-secondary); padding: 0.4rem 0; /* Adjusted padding for file input wrapper */ }
         input[type="file"]::file-selector-button {
-            margin-right: 1rem; padding: 0.625rem 1rem; border: 1px solid var(--border-color);
-            border-radius: 6px; background-color: var(--bg-element); color: var(--text-primary);
+            margin-right: 1rem; padding: 0.7rem 1rem; /* Adjusted button padding */ 
+            border: 1px solid var(--fb-border);
+            border-radius: 6px; background-color: var(--fb-bg-element); color: var(--fb-text-primary);
             font-weight: 500; cursor: pointer; transition: background-color 0.2s ease-out;
         }
-        input[type="file"]::file-selector-button:hover { background-color: var(--bg-container); }
+        input[type="file"]::file-selector-button:hover { background-color: var(--fb-bg-card); }
         
         .page-header { text-align: center; margin-bottom: 2.5rem; }
-        .page-title { color: var(--accent-primary); font-size: 2.5rem; margin-top: 0.5rem; } /* Removed title-font class */
-        .page-subtitle { color: var(--text-secondary); margin-top: 0.5rem; font-size: 1.1rem; }
+        .page-title { color: var(--fb-accent-primary); font-size: 2.5rem; margin-top: 0.5rem; }
+        .page-subtitle { color: var(--fb-text-secondary); margin-top: 0.5rem; font-size: 1.1rem; }
 
         .page-footer {
             text-align: center;
@@ -158,14 +163,15 @@ i<!DOCTYPE html>
             padding-top: 2rem;
             padding-bottom: 1.5rem;
             font-size: 0.8rem;
-            color: var(--text-muted);
+            color: var(--fb-text-secondary);
         }
     </style>
 </head>
 <body>
     <div class="main-container">
         <header class="page-header">
-            <h1 class="page-title">Audio Scribe</h1> <p class="page-subtitle">Upload your audio to transcribe and summarize.</p>
+            <h1 class="page-title">Audio Scribe</h1> 
+            <p class="page-subtitle">Upload your audio to transcribe and summarize.</p>
         </header>
         
         {% with messages = get_flashed_messages(with_categories=true) %}
@@ -201,10 +207,10 @@ i<!DOCTYPE html>
                 <p class="prompt-note">Your prompt **must** include the placeholder <code class="font-semibold">{transcript}</code> where the audio transcript will be inserted.</p>
             </div>
             
-            <div class="form-section border-t pt-6" style="border-color: var(--border-color);">
+            <div class="form-section border-t pt-6" style="border-color: var(--fb-border);">
                  <label class="form-checkbox-label">
                     <input type="checkbox" name="save_new_prompt_checkbox" id="save_new_prompt_checkbox" class="form-checkbox">
-                    <span style="color: var(--text-secondary);">Save this custom prompt for future use?</span>
+                    <span style="color: var(--fb-text-secondary);">Save this custom prompt for future use?</span>
                 </label>
                 <div id="new_prompt_name_container" style="display: none;" class="mt-3">
                     <label for="new_prompt_name" class="form-label">Name for new prompt:</label>
@@ -214,12 +220,12 @@ i<!DOCTYPE html>
 
             <button type="submit" id="submitButton"
                     class="w-full btn-primary font-semibold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 shadow-md"
-                    style="ring-offset-color: var(--bg-container); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.25), 0 2px 4px -1px rgba(0,0,0,0.15);">
+                    style="ring-offset-color: var(--fb-bg-card); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.25), 0 2px 4px -1px rgba(0,0,0,0.15);">
                 Transcribe & Summarize
             </button>
         </form>
         <div id="loader" class="loader"></div>
-        <p id="processingMessage" class="text-center text-sm mt-4" style="display:none; color: var(--text-muted);">
+        <p id="processingMessage" class="text-center text-sm mt-4" style="display:none; color: var(--fb-text-muted);">
             Processing your audio... please wait.
         </p>
     </div>

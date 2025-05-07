@@ -9,43 +9,46 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Clean Dark Palette (Nord Inspired) */
+        /* New Firebase Inspired Dark Palette */
         :root {
-            --bg-main: #2E3440; 
-            --bg-container: #3B4252; 
-            --bg-element: #434C5E; 
-            --border-color: #4C566A; 
-            --text-primary: #ECEFF4; 
-            --text-secondary: #D8DEE9; 
-            --text-muted: #A3ABB2; 
-            --accent-primary: #88C0D0; 
-            --accent-secondary: #5E81AC; 
-            --accent-tertiary: #B48EAD; 
-            --accent-success: #A3BE8C; 
-            --accent-error: #BF616A; 
-            --accent-warning: #EBCB8B; 
+            --fb-background: #0a0d0f; 
+            --fb-foreground: #909ba4; 
+            --fb-card: #171d22; 
+            --fb-primary: #5e1e2b; 
+            --fb-secondary: #795548; /* Warm Brown - Not used in this iteration, but available */
+            --fb-accent: #C0392B; /* Deep Red - Not used in this iteration, but available */
+
+            --fb-border: #2a3b47; 
+            --fb-input-bg: #1e2a33; 
+            --fb-text-muted: #788691; 
+            --fb-text-placeholder: #6c7a89; 
+            --fb-success: #27AE60; 
+            --fb-error: #C0392B;   /* Using the deep red for errors */
+            --fb-warning: #F39C12; 
+            --fb-info-accent: #3498DB; 
         }
 
         body { 
             font-family: 'Inter', sans-serif; 
-            background-color: var(--bg-main);
-            color: var(--text-primary);
+            background-color: var(--fb-background);
+            color: var(--fb-foreground);
             line-height: 1.6;
             font-weight: 400;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding: 1rem;
         }
         
         .main-container {
             width: 100%;
             max-width: 1200px; 
-            margin: 2.5rem auto; 
+            margin: 2rem auto; 
             padding: 2rem; 
-            background-color: var(--bg-container); 
-            border-radius: 10px; 
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.15);
-            border: 1px solid var(--border-color);
+            background-color: var(--fb-card); 
+            border-radius: 12px; 
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.3), 0 7px 10px rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--fb-border);
             flex-grow: 1;
         }
         .page-header {
@@ -53,13 +56,13 @@
             margin-bottom: 2rem;
         }
         .page-title { 
-            color: var(--accent-primary);
+            color: var(--fb-primary); /* Button color for title */
             font-size: 2.5rem; 
             margin-top: 0.5rem;
-            font-weight: 700; /* Ensure title is bold */
+            font-weight: 700; 
         }
         .page-subtitle {
-            color: var(--text-secondary);
+            color: var(--fb-text-muted);
             margin-top: 0.5rem;
             font-size: 1.1rem;
         }
@@ -72,72 +75,71 @@
         }
         @media (min-width: 1024px) { 
             .results-grid {
-                grid-template-columns: 1fr 1fr; /* Two equal columns on large screens */
+                grid-template-columns: 1fr 1fr; 
             }
         }
 
         .section-title {
             font-size: 1.5rem; 
             font-weight: 600; 
-            color: var(--accent-primary); 
+            color: var(--fb-primary); 
             padding-bottom: 0.75rem; 
             margin-bottom: 1rem; 
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--fb-border);
         }
         .content-box {
-            background-color: var(--bg-element); 
+            background-color: var(--fb-input-bg); 
             padding: 1.25rem; 
             border-radius: 8px; 
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--fb-border);
             overflow-y: auto; 
             white-space: pre-wrap; 
             word-wrap: break-word; 
             line-height: 1.6; 
-            color: var(--text-primary);
+            color: var(--fb-foreground);
             font-size: 0.9rem; 
-            /* Dynamic height calculation */
-            height: calc(100vh - 280px); /* Adjust 280px based on header/footer/margins */
-            min-height: 350px; /* Ensure a reasonable minimum height */
+            height: calc(100vh - 350px); /* Adjusted height to better fit content */
+            min-height: 250px; /* Reduced min-height */
             scrollbar-width: thin;
-            scrollbar-color: var(--border-color) var(--bg-element);
+            scrollbar-color: var(--fb-border) var(--fb-input-bg);
         }
         .content-box::-webkit-scrollbar { width: 8px; }
-        .content-box::-webkit-scrollbar-track { background: var(--bg-element); border-radius: 10px; }
-        .content-box::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; border: 2px solid var(--bg-element); }
+        .content-box::-webkit-scrollbar-track { background: var(--fb-input-bg); border-radius: 10px; }
+        .content-box::-webkit-scrollbar-thumb { background-color: var(--fb-border); border-radius: 10px; border: 2px solid var(--fb-input-bg); }
         
         .prompt-display-box {
-             background-color: rgba(0,0,0,0.1); 
-             border: 1px solid var(--border-color);
-             color: var(--text-muted);
+             background-color: rgba(23, 29, 34, 0.5); 
+             border: 1px solid var(--fb-border);
+             color: var(--fb-text-muted);
              font-family: 'Courier New', Courier, monospace;
              font-size: 0.8rem;
              padding: 0.75rem 1rem;
              margin-bottom: 1.5rem;
              border-radius: 6px;
-             max-height: 120px; 
+             max-height: 100px; /* Reduced max-height */
              overflow-y: auto;
         }
         .btn-primary {
             transition: background-color 0.2s ease-out, transform 0.15s ease-out, box-shadow 0.2s ease-out;
-            background-color: var(--accent-primary);
-            color: var(--bg-main);
+            background-color: var(--fb-primary);
+            color: #FFFFFF; 
             font-weight: 600;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
+            padding: 0.8rem 1.75rem;
+            border-radius: 8px;
             border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
         }
         .btn-primary:hover {
-            background-color: var(--accent-secondary);
+            background-color: #7d283b; 
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.25);
         }
         .btn-primary:active {
             transform: translateY(0px);
-            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.18);
         }
         .filename-highlight {
-            color: var(--accent-primary); 
+            color: var(--fb-primary); 
             font-weight: 600; 
         }
         .page-footer {
@@ -146,19 +148,57 @@
             padding-top: 2rem;
             padding-bottom: 1.5rem;
             font-size: 0.8rem;
-            color: var(--text-muted);
+            color: var(--fb-text-muted);
         }
+
+        /* Discord Webhook Section */
+        .discord-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--fb-border);
+        }
+        .discord-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--fb-text-secondary);
+        }
+        .discord-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.9rem;
+            color: var(--fb-foreground);
+            background-color: var(--fb-input-bg);
+            border: 1px solid var(--fb-border);
+            border-radius: 6px;
+            margin-bottom: 0.75rem;
+        }
+        .discord-input:focus {
+            outline: none;
+            border-color: var(--fb-primary);
+            box-shadow: 0 0 0 3px rgba(94, 30, 43, 0.3);
+        }
+        .discord-status {
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            height: 1.25rem; /* Reserve space to prevent layout shift */
+        }
+        .discord-status.success { color: var(--fb-success); }
+        .discord-status.error { color: var(--fb-error); }
+
     </style>
 </head>
 <body> 
     <div class="main-container">
         <header class="page-header">
-            <h1 class="page-title">Audio Scribe</h1> <p class="page-subtitle">Results for: <span class="filename-highlight">{{ filename if filename else "your audio file" }}</span></p>
+            <h1 class="page-title">Audio Scribe</h1> 
+            <p class="page-subtitle">Results for: <span class="filename-highlight">{{ filename if filename else "your audio file" }}</span></p>
         </header>
 
         {% if used_prompt %}
         <div class="prompt-display-box">
-            <h3 class="text-sm font-semibold mb-1" style="color: var(--text-secondary);">Prompt Used:</h3>
+            <h3 class="text-sm font-semibold mb-1" style="color: var(--fb-text-muted);">Prompt Used:</h3>
             {{ used_prompt }}
         </div>
         {% endif %}
@@ -171,7 +211,7 @@
                         {{ transcript }}
                     </div>
                 {% else %}
-                    <p style="color: var(--text-secondary); background-color: var(--bg-element); border-color: var(--accent-error);" class="p-4 border rounded-md text-sm">Transcription not available or failed.</p>
+                    <p style="color: var(--fb-text-muted); background-color: var(--fb-input-bg); border-color: var(--fb-error);" class="p-4 border rounded-md text-sm">Transcription not available or failed.</p>
                 {% endif %}
             </div>
 
@@ -182,15 +222,26 @@
                         {{ summary }}
                     </div>
                 {% else %}
-                    <p style="color: var(--text-secondary); background-color: var(--bg-element); border-color: var(--accent-error);" class="p-4 border rounded-md text-sm">Summary not available or failed.</p>
+                    <p style="color: var(--fb-text-muted); background-color: var(--fb-input-bg); border-color: var(--fb-error);" class="p-4 border rounded-md text-sm">Summary not available or failed.</p>
                 {% endif %}
             </div>
         </div>
 
+        <div class="discord-section">
+            <h3 class="section-title text-base mb-3">Send Summary to Discord</h3>
+            <div>
+                <label for="discordWebhookUrl" class="discord-label">Discord Webhook URL:</label>
+                <input type="url" id="discordWebhookUrl" name="discordWebhookUrl" class="discord-input" placeholder="Enter your Discord webhook URL">
+            </div>
+            <button id="sendToDiscordBtn" class="btn-primary mt-3 py-2 px-4 text-sm">
+                Send to Discord
+            </button>
+            <p id="discordStatus" class="discord-status mt-2"></p>
+        </div>
         <div class="text-center mt-8">
             <a href="{{ url_for('index') }}"
                class="btn-primary font-semibold py-3 px-6 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2"
-               style="ring-offset-color: var(--bg-container);">
+               style="ring-offset-color: var(--fb-card);">
                 Transcribe Another
             </a>
         </div>
@@ -198,5 +249,65 @@
      <footer class="page-footer">
         <p>&copy; Audio Scribe Service</p>
     </footer>
+
+    <script>
+        const sendToDiscordBtn = document.getElementById('sendToDiscordBtn');
+        const discordWebhookUrlInput = document.getElementById('discordWebhookUrl');
+        const summaryContentDiv = document.getElementById('summaryContent');
+        const discordStatusP = document.getElementById('discordStatus');
+        const currentFilename = JSON.parse('{{ filename_json | safe }}'); // Safely parse the JSON string
+
+        if (sendToDiscordBtn) {
+            sendToDiscordBtn.addEventListener('click', function() {
+                const webhookUrl = discordWebhookUrlInput.value.trim();
+                const summaryText = summaryContentDiv ? summaryContentDiv.innerText.trim() : "";
+
+                if (!webhookUrl) {
+                    discordStatusP.textContent = 'Please enter a Discord webhook URL.';
+                    discordStatusP.className = 'discord-status error';
+                    return;
+                }
+                if (!summaryText) {
+                    discordStatusP.textContent = 'No summary content available to send.';
+                    discordStatusP.className = 'discord-status error';
+                    return;
+                }
+
+                discordStatusP.textContent = 'Sending...';
+                discordStatusP.className = 'discord-status'; // Reset class
+                sendToDiscordBtn.disabled = true;
+
+                fetch("{{ url_for('send_to_discord_route') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        webhook_url: webhookUrl, 
+                        summary_text: summaryText,
+                        filename: currentFilename || "Audio File"
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        discordStatusP.textContent = data.message || 'Sent successfully!';
+                        discordStatusP.className = 'discord-status success';
+                    } else {
+                        discordStatusP.textContent = data.message || 'Failed to send.';
+                        discordStatusP.className = 'discord-status error';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    discordStatusP.textContent = 'An error occurred while sending.';
+                    discordStatusP.className = 'discord-status error';
+                })
+                .finally(() => {
+                    sendToDiscordBtn.disabled = false;
+                });
+            });
+        }
+    </script>
 </body>
 </html>
